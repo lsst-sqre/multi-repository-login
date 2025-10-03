@@ -9,7 +9,7 @@ inputs:
   GAR_PUSH_TOKEN:
     description: "Push token for Google Artifact Registry"
     required: false
-  GITHUB_TOKEN:
+  GHCR_PUSH_TOKEN:
     description: "Push token for Github Container Registry"
     required: false
   DOCKER_USERNAME:
@@ -37,8 +37,8 @@ runs:
         images: ${{ inputs.images }}
         DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
         DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
-        GAR_TOKEN: ${{ inputs.GAR_TOKEN }}
-        GHCR_TOKEN: ${{ inputs.GHCR_TOKEN }}
+        GAR_PUSH_TOKEN: ${{ inputs.GAR_PUSH_TOKEN }}
+        GHCR_PUSH_TOKEN: ${{ inputs.GHCR_PUSH_TOKEN }}
       run: |
          # env.image may be a comma-separated list of images; we are
          # thus creating a set of registry-specific variables from the
