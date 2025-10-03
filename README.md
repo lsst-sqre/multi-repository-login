@@ -2,14 +2,14 @@
 
 A GitHub Actions composite action that uses standard SQuaRE secrets to log into one or more of Github Container Registry, Google Artifact Registry, and Docker Hub in order to push images.
 
-The standard secrets are:
+The standard secrets, which must be passed as inputs if used, are:
 
 * `DOCKER_USERNAME`
 * `DOCKER_TOKEN`
 * `GHCR_PUSH_TOKEN`
 * `GAR_PUSH_TOKEN`
 
-The action will only authenticate to registries referenced in the ``images`` input.
+The action will only authenticate to registries referenced in the ``images`` input, and then only if the corresponding inputs are nonempty.
 
 ## Usage
 
@@ -50,14 +50,23 @@ jobs:
         id: login
         with:
           images: ${{ steps.image_names.outputs.images }}
+          GAR_TOKEN: ${{ secrets.GAR_TOKEN }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  # Unused
+          # First, because no Docker Hub target in images.
+          # Also unused because no DOCKER_PASSWORD is set.
 ```
 
 ## Action reference
 
 ### Inputs
 
-- `images` (string, required) a string representing the untagged image or images to build. This may be a list in the form of a comma separated string.
+* `images` (string, required) a string representing the untagged image or images to build. This may be a list in the form of a comma separated string.
   For example, `ghcr.io/lsst-sqre/nublado-jupyterlab-base,us-central1.docker.pkg.dev/rubin-shared-services-71ec/sciplat/jupyterlab-base`.
+* `DOCKER_USERNAME` All of these are found in lsst-sqre as org-level secrets.
+* `DOCKER_TOKEN`
+* `GHCR_PUSH_TOKEN`
+* `GAR_PUSH_TOKEN`
 
 ## Developer guide
 
