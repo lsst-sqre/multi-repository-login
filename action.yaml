@@ -90,9 +90,9 @@ runs:
     # Only bother logging in to a given site if we have credentials
     - name: Log in to Docker Hub repository
       env:
-        docker_registry: steps.determine_registries.outputs.docker_registry
-        docker_username: steps.determine_registries.outputs.docker_username
-        docker_password: steps.determine_registries.outputs.docker_password
+        docker_registry: ${{ steps.determine_registries.outputs.docker_registry }}
+        docker_username: ${{ steps.determine_registries.outputs.docker_username }}
+        docker_password: ${{ steps.determine_registries.outputs.docker_password }}
       if: >-
         ((env.docker_registry != '') &&
          (env.docker_username != '') &&
@@ -105,9 +105,9 @@ runs:
 
     - name: Log in to GitHub Container Registry
       env:
-        github_registry: steps.determine_registries.outputs.github_registry
-        github_username: steps.determine_registries.outputs.github_username
-        github_password: steps.determine_registries.outputs.github_password
+        github_registry: ${{ steps.determine_registries.outputs.github_registry }}
+        github_username: ${{ steps.determine_registries.outputs.github_username }}
+        github_password: ${{ steps.determine_registries.outputs.github_password }}
       if: >-
         ((env.github_registry != '') &&
          (env.github_username != '') &&
@@ -120,9 +120,9 @@ runs:
 
     - name: Log in to Google Artifact Registry
       env:
-        google_registry: steps.determine_registries.outputs.google_registry
-        google_username: steps.determine_registries.outputs.google_username
-        google_password: steps.determine_registries.outputs.google_password
+        google_registry: ${{ steps.determine_registries.outputs.google_registry }}
+        google_username: ${{ steps.determine_registries.outputs.google_username }}
+        google_password: ${{ steps.determine_registries.outputs.google_password }}
       if: >-
         ((env.google_registry != '') &&
          (env.google_username != '') &&
