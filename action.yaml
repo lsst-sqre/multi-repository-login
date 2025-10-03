@@ -1,0 +1,115 @@
+name: "Multiple login (GHCR, GAR, Docker Hub)"
+description: >
+  Log in to one or more of the places we push to.  Requires the standard
+  SQuaRE organizational secrets from the lsst-sqre GitHub organization.
+inputs:
+  images:
+    description: 'fully-qualified Docker output image URIs, comma-separated'
+    required: true
+
+# We need actions/write if we want to do a GH App, and we need
+# packages/write to push to ghcr.io with GITHUB_TOKEN
+permissions:
+  actions: write
+  contents: read
+  packages: write
+  statuses: read
+
+runs:
+  steps:
+    - name: determine_registries
+      id: determine_registries
+      shell: bash
+      run: |
+         # env.image may be a comma-separated list of images; we are
+         # thus creating a set of registry-specific variables from the
+         # images in the list
+         split_images=$(echo ${{ env.images }} | tr ',' ' ')
+         for img in ${split_images}; do
+             image_host=$(echo ${img} | cut -d '/' -f 1)
+             # Check for implicit Docker Hub
+             case ${image_host} in
+                 *.*)
+                     ;;
+                 *)
+                     image_host="docker.io"
+                     ;;
+             esac
+             case ${image_host} in
+                 docker.com | docker.io | *.docker.com | *.docker.io)
+                     d_tag="docker_"
+                     d_registry="docker.io"
+                     d_username="${{ secrets.DOCKER_USERNAME }}"
+                     d_password="${{ secrets.DOCKER_TOKEN }}"
+                     ;;
+                 ghcr.io | *.ghcr.io)
+                     d_tag="github_"
+                     d_registry="ghcr.io"
+                     # using secrets.GITHUB_TOKEN fails, saying it doesn't
+                     # have write.package, which seems weird.
+                     d_username="token"
+                     d_password="${{ secrets.GHCR_PUSH_TOKEN}}"
+                     ;;
+                 *-docker.pkg.dev)
+                    d_tag="google_"
+                    d_registry="${image_host}"
+                    d_username="_json_key_base64"
+                    d_password="${{ secrets.GAR_PUSH_TOKEN }}"
+                    ;;
+                 *)
+                     d_tag=""
+                     d_registry="${image_host}"
+                     d_username=""
+                     d_password=""
+                     ;;
+             esac
+             echo "${d_tag}registry=${d_registry}" >> "$GITHUB_OUTPUT"
+             echo "${d_tag}username=${d_username}" >> "$GITHUB_OUTPUT"
+             echo "${d_tag}password=${d_password}" >> "$GITHUB_OUTPUT"
+         done
+
+    # Only bother logging in to a given site if we have credentials
+    - name: Log in to Docker Hub repository
+      env:
+        docker_registry: steps.determine_registries.outputs.docker_registry
+        docker_username: steps.determine_registries.outputs.docker_username
+        docker_password: steps.determine_registries.outputs.docker_password
+      if: >-
+        ((env.docker_registry != '') &&
+         (env.docker_username != '') &&
+         (env.docker_password != ''))
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.docker_registry }}
+        username: ${{ env.docker_username }}
+        password: ${{ env.docker_password }}
+
+    - name: Log in to GitHub Container Registry
+      env:
+        github_registry: steps.determine_registries.outputs.github_registry
+        github_username: steps.determine_registries.outputs.github_username
+        github_password: steps.determine_registries.outputs.github_password
+      if: >-
+        ((env.github_registry != '') &&
+         (env.github_username != '') &&
+         (env.github_password != ''))
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.github_registry }}
+        username: ${{ env.github_username }}
+        password: ${{ env.github_password }}
+
+    - name: Log in to Google Artifact Registry
+      env:
+        google_registry: steps.determine_registries.outputs.google_registry
+        google_username: steps.determine_registries.outputs.google_username
+        google_password: steps.determine_registries.outputs.google_password
+      if: >-
+        ((env.google_registry != '') &&
+         (env.google_username != '') &&
+         (env.google_password != ''))
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.google_registry }}
+        username: ${{ env.google_username }}
+        password: ${{ env.google_password }}
