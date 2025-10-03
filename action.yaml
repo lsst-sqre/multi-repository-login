@@ -6,6 +6,15 @@ inputs:
   images:
     description: 'fully-qualified Docker output image URIs, comma-separated'
     required: true
+  secrets:
+    DOCKER_USERNAME:
+      required: false
+    DOCKER_TOKEN:
+      required: false
+    GHCR_PUSH_TOKEN:
+      required: false
+    GAR_PUSH_TOKEN:
+      required: false
 
 # We need actions/write if we want to do a GH App, and we need
 # packages/write to push to ghcr.io with GITHUB_TOKEN
