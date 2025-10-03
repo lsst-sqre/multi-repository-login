@@ -34,11 +34,11 @@ runs:
       id: determine_registries
       shell: bash
       env:
-        images: ${{ input.images }}
-        DOCKER_USERNAME: ${{ input.DOCKER_USERNAME }}
-        DOCKER_TOKEN: ${{ input.DOCKER_TOKEN }}
-        GAR_TOKEN: ${{ input.GAR_TOKEN }}
-        GHCR_TOKEN: ${{ input.GHCR_TOKEN }}
+        images: ${{ inputs.images }}
+        DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
+        DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
+        GAR_TOKEN: ${{ inputs.GAR_TOKEN }}
+        GHCR_TOKEN: ${{ inputs.GHCR_TOKEN }}
       run: |
          # env.image may be a comma-separated list of images; we are
          # thus creating a set of registry-specific variables from the
