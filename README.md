@@ -1,6 +1,6 @@
 # lsst-sqre/multi-repository-login
 
-A GitHub Actions action that uses standard SQuaRE secrets to log into one or more of Github Container Registry, Google Artifact Registry, and Docker Hub in order to push images.
+A GitHub Actions composite action that uses standard SQuaRE secrets to log into one or more of Github Container Registry, Google Artifact Registry, and Docker Hub in order to push images.
 
 The standard secrets are:
 
@@ -58,6 +58,12 @@ jobs:
 
 - `images` (string, required) a string representing the untagged image or images to build. This may be a list in the form of a comma separated string.
   For example, `ghcr.io/lsst-sqre/nublado-jupyterlab-base,us-central1.docker.pkg.dev/rubin-shared-services-71ec/sciplat/jupyterlab-base`.
+
+## Developer guide
+
+This repository provides a **composite** GitHub Action, a type of action that packages multiple regular actions into a single step.
+We do this to make the GitHub Actions of all our software projects more consistent and easier to maintain.
+[You can learn more about composite actions in the GitHub documentation.](https://docs.github.com/en/actions/creating-actions/creating-a-composite-action)
 
 Create new releases using the GitHub Releases UI and assign a tag with a [semantic version](https://semver.org), including a `v` prefix. Choose the semantic version based on compatibility for users of this workflow. If backwards compatibility is broken, bump the major version.
 

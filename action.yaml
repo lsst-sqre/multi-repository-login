@@ -16,6 +16,7 @@ permissions:
   statuses: read
 
 runs:
+  using: "composite"
   steps:
     - name: determine_registries
       id: determine_registries
