@@ -7,6 +7,7 @@ The standard secrets, which must be passed as inputs if used, are:
 * `DOCKER_USERNAME`
 * `DOCKER_TOKEN`
 * `GHCR_PUSH_TOKEN`
+* `GITHUB_TOKEN`
 * `GAR_PUSH_TOKEN`
 
 The action will only authenticate to registries referenced in the ``images`` input, and then only if the corresponding inputs are nonempty.
@@ -50,6 +51,7 @@ jobs:
         id: login
         with:
           images: ${{ steps.image_names.outputs.images }}
+          use_nonstandard_ghcr_token: true
           GAR_TOKEN: ${{ secrets.GAR_TOKEN }}
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  # Unused
@@ -63,9 +65,13 @@ jobs:
 
 * `images` (string, required) a string representing the untagged image or images to build. This may be a list in the form of a comma separated string.
   For example, `ghcr.io/lsst-sqre/nublado-jupyterlab-base,us-central1.docker.pkg.dev/rubin-shared-services-71ec/sciplat/jupyterlab-base`.
+* `use_nonstandard_ghcr_token` (boolean, optional, defaults to `false`) for reasons unknown, `GITHUB_TOKEN` has proven insufficient to push sciplat-lab images.
+  This allows the user to specify instead that `GHCR_PUSH_TOKEN` may be substituted.
+  This parameter should not generally be required.
 * `DOCKER_USERNAME` All of these are found in lsst-sqre as org-level secrets.
 * `DOCKER_TOKEN`
 * `GHCR_PUSH_TOKEN`
+* `GITHUB_TOKEN`
 * `GAR_PUSH_TOKEN`
 
 ## Developer guide
