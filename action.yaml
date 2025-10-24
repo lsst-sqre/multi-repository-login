@@ -46,7 +46,7 @@ runs:
         DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
         DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
         GAR_PUSH_TOKEN: ${{ inputs.GAR_PUSH_TOKEN }}
-        GHCR_PUSH_TOKEN: ${{ inputs.use-nonstandard-ghcr-token == 'false' && inputs.GITHUB_TOKEN || inputs.GHCR_TOKEN }}
+        GHCR_PUSH_TOKEN: ${{ inputs.use-nonstandard-ghcr-token == 'false' && inputs.GITHUB_TOKEN || inputs.GHCR_PUSH_TOKEN }}
         GHCR_USERNAME: ${{ inputs.use-nonstandard-ghcr-token == 'false' && github.repository.owner || 'token' }}
       run: |
          # env.image may be a comma-separated list of images; we are
