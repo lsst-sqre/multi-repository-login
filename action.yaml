@@ -16,9 +16,6 @@ inputs:
   GHCR_PUSH_TOKEN:
     description: "Nonstandard push token for GitHub Container Registry"
     required: false
-  GITHUB_TOKEN:
-    description: "Standard token for GitHub Actions"
-    required: false
   DOCKER_USERNAME:
     description: "Username for Docker Hub"
     required: false
@@ -48,7 +45,7 @@ runs:
         DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
         GAR_PUSH_TOKEN: ${{ inputs.GAR_PUSH_TOKEN }}
         GHCR_PUSH_TOKEN: ${{ inputs.GHCR_PUSH_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       run: |
          # env.image may be a comma-separated list of images; we are
          # thus creating a set of registry-specific variables from the
