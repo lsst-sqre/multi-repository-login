@@ -40,7 +40,6 @@ runs:
       env:
         images: ${{ inputs.images }}
         nonstandard_ghcr_token: ${{ inputs.use-nonstandard-ghcr-token }}
-        repo_owner: ${{ github.repository.owner }}
         DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
         DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
         GAR_PUSH_TOKEN: ${{ inputs.GAR_PUSH_TOKEN }}
@@ -72,7 +71,7 @@ runs:
                      d_tag="github_"
                      d_registry="ghcr.io"
                      if [ "${nonstandard_ghcr_token}" = 'false' ]; then
-                         d_username="${repo_owner}"
+                         d_username="${GITHUB_REPOSITORY_OWNER}"
                          d_password="${GITHUB_TOKEN}"
                      else
                          d_username="token"
