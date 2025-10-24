@@ -6,15 +6,8 @@ inputs:
   images:
     description: 'fully-qualified Docker output image URIs, comma-separated'
     required: true
-  use-nonstandard-ghcr-token:
-    description: "Accomodation for sciplat-lab: if set, use GHCR_PUSH_TOKEN rather than GITHUB_TOKEN"
-    required: false
-    default: false
   GAR_PUSH_TOKEN:
     description: "Push token for Google Artifact Registry"
-    required: false
-  GHCR_PUSH_TOKEN:
-    description: "Nonstandard push token for GitHub Container Registry"
     required: false
   DOCKER_USERNAME:
     description: "Username for Docker Hub"
@@ -39,11 +32,9 @@ runs:
       shell: bash
       env:
         images: ${{ inputs.images }}
-        nonstandard_ghcr_token: ${{ inputs.use-nonstandard-ghcr-token }}
         DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
         DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
         GAR_PUSH_TOKEN: ${{ inputs.GAR_PUSH_TOKEN }}
-        GHCR_PUSH_TOKEN: ${{ inputs.GHCR_PUSH_TOKEN }}
         GITHUB_TOKEN: ${{ github.token }}
       run: |
          # env.image may be a comma-separated list of images; we are
@@ -70,13 +61,8 @@ runs:
                  ghcr.io | *.ghcr.io)
                      d_tag="github_"
                      d_registry="ghcr.io"
-                     if [ "${nonstandard_ghcr_token}" = 'false' ]; then
-                         d_username="${GITHUB_REPOSITORY_OWNER}"
-                         d_password="${GITHUB_TOKEN}"
-                     else
-                         d_username="token"
-                         d_password="${GHCR_PUSH_TOKEN}"
-                     fi
+                     d_username="${GITHUB_REPOSITORY_OWNER}"
+                     d_password="${GITHUB_TOKEN}"
                      ;;
                  *-docker.pkg.dev)
                     d_tag="google_"
