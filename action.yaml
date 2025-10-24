@@ -43,11 +43,12 @@ runs:
       env:
         images: ${{ inputs.images }}
         nonstandard_ghcr_token: ${{ inputs.use-nonstandard-ghcr-token }}
+        repo_owner: ${{ github.repository.owner }}
         DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
         DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
         GAR_PUSH_TOKEN: ${{ inputs.GAR_PUSH_TOKEN }}
-        GHCR_PUSH_TOKEN: ${{ inputs.use-nonstandard-ghcr-token == 'false' && inputs.GITHUB_TOKEN || inputs.GHCR_PUSH_TOKEN }}
-        GHCR_USERNAME: ${{ inputs.use-nonstandard-ghcr-token == 'false' && github.repository.owner || 'token' }}
+        GHCR_PUSH_TOKEN: ${{ inputs.GHCR_PUSH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
          # env.image may be a comma-separated list of images; we are
          # thus creating a set of registry-specific variables from the
@@ -73,10 +74,13 @@ runs:
                  ghcr.io | *.ghcr.io)
                      d_tag="github_"
                      d_registry="ghcr.io"
-                     # using secrets.GITHUB_TOKEN fails, saying it doesn't
-                     # have write.package, which seems weird.
-                     d_username="${GHCR_USERNAME}"
-                     d_password="${GHCR_PUSH_TOKEN}"
+                     if [ "${nonstandard_ghcr_token}" = 'false' ]; then
+                         d_username="${repo_owner}"
+                         d_password="${GITHUB_TOKEN}"
+                     else
+                         d_username="token"
+                         d_password="${GHCR_PUSH_TOKEN}"
+                     fi
                      ;;
                  *-docker.pkg.dev)
                     d_tag="google_"
